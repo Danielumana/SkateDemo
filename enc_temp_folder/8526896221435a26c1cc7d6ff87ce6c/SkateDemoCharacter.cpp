@@ -106,7 +106,11 @@ void ASkateDemoCharacter::Move(const FInputActionValue& Value)
 
 	FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	int32 RightMovementDotProduct = FVector::DotProduct(RightDirection, MovementVector);
 	
+	FVector value = SkateBoardSkeletalMesh->GetForwardVector();
+	FVector InterpMovementVector = FVector::SlerpNormals(MovementVector, MovementVector, MovementInterpolationAlphaValue);
 	// add movement 
 	AddMovementInput(ForwardDirection, MovementVector.Y);
 	AddMovementInput(RightDirection, MovementVector.X);

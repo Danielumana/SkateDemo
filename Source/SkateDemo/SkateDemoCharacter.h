@@ -74,5 +74,12 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+
+protected:
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Movement")
+	int32 MovementInterpolationAlphaValue = 0.01;
+
 };
 
