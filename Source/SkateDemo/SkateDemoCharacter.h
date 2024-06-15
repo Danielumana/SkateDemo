@@ -20,6 +20,7 @@ class ASkateDemoCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -27,7 +28,11 @@ class ASkateDemoCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-	
+
+	/** Skate mesh */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skate", meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* SkateBoardSkeletalMesh;
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
