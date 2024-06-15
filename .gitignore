@@ -73,3 +73,4 @@ Plugins/*/Intermediate/*
 # Cache files for the editor to use
 DerivedDataCache/*
 .vsconfig
+enc_temp_folder/957a653169b3381d523d1573fb93a38b/SkateDemoCharacter.cpp
