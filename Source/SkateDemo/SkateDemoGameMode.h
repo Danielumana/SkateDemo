@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Delegates/DelegateCombinations.h"
 #include "SkateDemoGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -13,12 +14,18 @@ class ASkateDemoGameMode : public AGameModeBase
 
 public:
 	ASkateDemoGameMode();
+	UDELEGATE(BlueprintCallable)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreUpdatedDelegate, float, TotalPlayerPoints);
 
 protected:
 
 	float TotalPlayerPoints = 0.0f;
 
 public:
+
+	UPROPERTY(BlueprintAssignable, Category = "EventDispatchers")
+	FOnScoreUpdatedDelegate OnScoreUpdate;
+
 	UFUNCTION()
 	void AddPointsOnSuccessfulTrick(float PointsToAdd);
 	
