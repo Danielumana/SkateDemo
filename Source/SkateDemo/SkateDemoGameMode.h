@@ -13,6 +13,22 @@ class ASkateDemoGameMode : public AGameModeBase
 
 public:
 	ASkateDemoGameMode();
+
+protected:
+
+	float TotalPlayerPoints = 0.0f;
+
+public:
+	UFUNCTION()
+	void AddPointsOnSuccessfulTrick(float PointsToAdd);
+	
+	UFUNCTION()
+	void RemovePointsOnFailedTrick(float ToRemove);
+
+	UFUNCTION(BlueprintCallable, Category = "PointsData")
+	FORCEINLINE float GetTotalPoints() const { return TotalPlayerPoints; }
+
+
 };
 
 

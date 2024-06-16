@@ -7,9 +7,19 @@
 ASkateDemoGameMode::ASkateDemoGameMode()
 {
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/SkateDemo/Blueprints/Player/BP_SkaterCharacter"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+}
+
+void ASkateDemoGameMode::AddPointsOnSuccessfulTrick(float PointsToAdd)
+{
+	TotalPlayerPoints += PointsToAdd;
+}
+
+void ASkateDemoGameMode::RemovePointsOnFailedTrick(float ToRemove)
+{
+	TotalPlayerPoints = FMath::Max(TotalPlayerPoints - ToRemove, 0.0f);
 }
