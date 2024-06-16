@@ -46,9 +46,8 @@ ASkateDemoCharacter::ASkateDemoCharacter()
 	FollowCamera->bUsePawnControlRotation = false;
 
 	//Create skate skeletal mesh component
-	SkateBoardSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkateBoardSkeletalMesh"));
-	SkateBoardSkeletalMesh->SetupAttachment(GetCapsuleComponent());
-
+	SkateboardSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkateBoardSkeletalMesh"));
+	SkateboardSkeletalMesh->SetupAttachment(GetCapsuleComponent());
 }
 
 void ASkateDemoCharacter::BeginPlay()
@@ -124,3 +123,41 @@ void ASkateDemoCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y*0.01);
 	}
 }
+
+
+void ASkateDemoCharacter::Jump()
+{
+	Super::Jump();
+	if (SkateboardSkeletalMesh == nullptr || SkateAnimationJump == nullptr)
+	{
+		return;
+	}
+	SkateboardSkeletalMesh->PlayAnimation(SkateAnimationJump, false);
+}
+
+//void ASkateDemoCharacter::SetSkateboardAttachment(USceneComponent* AttachmentComponent, bool bShouldAttach)
+//{
+//	if (SkateboardSkeletalMesh == nullptr)
+//	{
+//		return;
+//	}
+//	bool bIsAttachedToInputComponent = SkateboardSkeletalMesh->IsAttachedTo(AttachmentComponent);
+//	if (not bShouldAttach)
+//	{
+//		if (not bIsAttachedToInputComponent && IsValid(AttachmentComponent))
+//		{
+//			return;
+//		} 
+//		SkateboardSkeletalMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+//		return;
+//	}
+//	else
+//	{
+//		if (bIsAttachedToInputComponent)
+//		{
+//			return;
+//		}
+//		SkateboardSkeletalMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "rootSocket");
+//	}
+//
+//}

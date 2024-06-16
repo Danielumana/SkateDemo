@@ -11,6 +11,8 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+class UAnimationAsset;
+class USkeletalMeshComponent;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -31,7 +33,7 @@ class ASkateDemoCharacter : public ACharacter
 
 	/** Skate mesh */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skate", meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* SkateBoardSkeletalMesh;
+	USkeletalMeshComponent* SkateboardSkeletalMesh;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -51,7 +53,7 @@ class ASkateDemoCharacter : public ACharacter
 
 public:
 	ASkateDemoCharacter();
-	
+
 
 protected:
 
@@ -60,12 +62,14 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+
+	virtual void Jump() override;
+
 
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	// To add mapping context
 	virtual void BeginPlay();
 
@@ -75,11 +79,13 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	UFUNCTION(BlueprintCallable, Category = "SkatePlayer")
+	FORCEINLINE class USkeletalMeshComponent* GetSkateSkeletalMesh() const { return SkateboardSkeletalMesh; }
 
-protected:
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Movement")
-	int32 MovementInterpolationAlphaValue = 0.01;
+public:
 
+	UPROPERTY(EditDefaultsOnly, Category = "SkatePlayer")
+	UAnimationAsset* SkateAnimationJump;
 };
 
