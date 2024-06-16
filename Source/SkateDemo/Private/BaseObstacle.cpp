@@ -114,7 +114,6 @@ void ABaseObstacle::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 	}
 	if (GameModeReference == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("invalid gamemode"));
 		return;
 	}
 	UPawnMovementComponent* MovementComponent = OverlapCharacter->GetMovementComponent();
