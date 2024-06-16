@@ -42,7 +42,6 @@ void ABaseObstacle::BeginPlay()
 	}
 
 	GameModeReference = Cast<ASkateDemoGameMode>(UGameplayStatics::GetGameMode(WorldObjectReference));
-	UE_LOG(LogTemp, Warning, TEXT("gamemode"), UGameplayStatics::GetGameMode(WorldObjectReference));
 }
 
 void ABaseObstacle::PostInitializeComponents()
