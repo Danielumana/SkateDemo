@@ -14,11 +14,12 @@
 ABaseObstacle::ABaseObstacle()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	 
 	ObstacleCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("ObstacleCollision"));
 	ObstacleCollision->SetupAttachment(RootComponent);
 	FVector ObstacleCollisionExtents(55.9f, 89.4f, 55.0f);
 	ObstacleCollision->SetBoxExtent(ObstacleCollisionExtents);
+	ObstacleCollision->SetGenerateOverlapEvents(false);
 
 	TrickValidationZone = CreateDefaultSubobject<USphereComponent>(TEXT("TrickValidationZone"));
 	TrickValidationZone->SetupAttachment(ObstacleCollision);
