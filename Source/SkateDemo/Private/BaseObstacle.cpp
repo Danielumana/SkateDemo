@@ -97,7 +97,6 @@ void ABaseObstacle::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 	{
 		return;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Overlap start"));
 	bIsPlayerOnValidTrick = true;
 }
 
@@ -127,7 +126,6 @@ void ABaseObstacle::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 		bIsPlayerOnValidTrick = false;
 		return;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Overlap end"));
 	GameModeReference->AddPointsOnSuccessfulTrick(TrickPoints);
 	bIsPlayerOnValidTrick = false;
 }
