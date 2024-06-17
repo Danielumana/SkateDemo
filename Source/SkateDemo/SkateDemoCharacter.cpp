@@ -18,7 +18,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ASkateDemoCharacter::ASkateDemoCharacter()
 {
-
+	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -48,6 +48,9 @@ ASkateDemoCharacter::ASkateDemoCharacter()
 	//Create skate skeletal mesh component
 	SkateboardSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkateBoardSkeletalMesh"));
 	SkateboardSkeletalMesh->SetupAttachment(GetCapsuleComponent());
+
+	GetCharacterMovement()->BrakingDecelerationWalking = DefaultBrakingDecelerationWalking;
+	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
 }
 
 void ASkateDemoCharacter::BeginPlay()
@@ -82,6 +85,14 @@ void ASkateDemoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASkateDemoCharacter::Look);
+
+		// Speed Up
+		EnhancedInputComponent->BindAction(SpeedUpAction, ETriggerEvent::Triggered, this, &ASkateDemoCharacter::SpeedUp);
+		EnhancedInputComponent->BindAction(SpeedUpAction, ETriggerEvent::Completed, this, &ASkateDemoCharacter::StopSpeedUp);
+
+		// Slow Down 
+		EnhancedInputComponent->BindAction(SlowDownAction, ETriggerEvent::Triggered, this, &ASkateDemoCharacter::SlowDown);
+		EnhancedInputComponent->BindAction(SlowDownAction, ETriggerEvent::Completed, this, &ASkateDemoCharacter::StopSlowDown);
 	}
 	else
 	{
@@ -89,16 +100,46 @@ void ASkateDemoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	}
 }
 
+void ASkateDemoCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	switch (CurrentAbilityType)
+	{
+	case EAbilityType::SpeedUp:
+	{
+		float CurrentMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+		if (CurrentMaxWalkSpeed >= SpeedUpMaxWalkSpeed)
+		{
+			return;
+		}
+		float InterpMaxWalkSpeed = FMath::Lerp(CurrentMaxWalkSpeed, SpeedUpMaxWalkSpeed, SpeedUpInterpolationAlpha);
+		GetCharacterMovement()->MaxWalkSpeed = InterpMaxWalkSpeed;
+		break;
+	}
+	case EAbilityType::SlowDown:
+
+		break;
+
+	default:
+		break;
+	}
+}
+
 void ASkateDemoCharacter::Move(const FInputActionValue& Value)
 {
+
+	if (CurrentAbilityType == EAbilityType::SlowDown)
+	{
+		return;
+	}
 	if (Controller == nullptr)
 	{
 		return;
 	}
 	// input is a Vector2D
 	FVector MovementVector = Value.Get<FVector>();
-	/*MovementVector.X = FMath::Clamp(MovementVector.X, -0.5, 0.5);*/
-	/*MovementVector.X = FMath::Clamp(MovementVector.X, -0.5, 0.5);*/
+
 	// find out which way is forward
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -125,39 +166,41 @@ void ASkateDemoCharacter::Look(const FInputActionValue& Value)
 }
 
 
-void ASkateDemoCharacter::Jump()
+void ASkateDemoCharacter::SpeedUp(const FInputActionValue& Value)
 {
-	Super::Jump();
-	if (SkateboardSkeletalMesh == nullptr || SkateAnimationJump == nullptr)
+	if (CurrentAbilityType != EAbilityType::None)
 	{
 		return;
 	}
-	SkateboardSkeletalMesh->PlayAnimation(SkateAnimationJump, false);
+	CurrentAbilityType = EAbilityType::SpeedUp;
 }
 
-//void ASkateDemoCharacter::SetSkateboardAttachment(USceneComponent* AttachmentComponent, bool bShouldAttach)
-//{
-//	if (SkateboardSkeletalMesh == nullptr)
-//	{
-//		return;
-//	}
-//	bool bIsAttachedToInputComponent = SkateboardSkeletalMesh->IsAttachedTo(AttachmentComponent);
-//	if (not bShouldAttach)
-//	{
-//		if (not bIsAttachedToInputComponent && IsValid(AttachmentComponent))
-//		{
-//			return;
-//		} 
-//		SkateboardSkeletalMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-//		return;
-//	}
-//	else
-//	{
-//		if (bIsAttachedToInputComponent)
-//		{
-//			return;
-//		}
-//		SkateboardSkeletalMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "rootSocket");
-//	}
-//
-//}
+void ASkateDemoCharacter::StopSpeedUp(const FInputActionValue& Value)
+{
+	if (CurrentAbilityType != EAbilityType::SpeedUp)
+	{
+		return;
+	}
+	CurrentAbilityType = EAbilityType::None;
+	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
+}
+
+void ASkateDemoCharacter::SlowDown(const FInputActionValue& Value)
+{
+	if (CurrentAbilityType != EAbilityType::None)
+	{
+		return;
+	}
+	CurrentAbilityType = EAbilityType::SlowDown;
+	GetCharacterMovement()->BrakingDecelerationWalking = SlowDownBrakingDecelerationWalking;
+}
+
+void ASkateDemoCharacter::StopSlowDown(const FInputActionValue& Value)
+{
+	if (CurrentAbilityType != EAbilityType::SlowDown)
+	{
+		return;
+	}
+	CurrentAbilityType = EAbilityType::None;
+	GetCharacterMovement()->BrakingDecelerationWalking = DefaultBrakingDecelerationWalking;
+}

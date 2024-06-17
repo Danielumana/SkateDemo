@@ -7,6 +7,14 @@
 #include "Logging/LogMacros.h"
 #include "SkateDemoCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum class EAbilityType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	SlowDown UMETA(DisplayName = "SlowDown"),
+	SpeedUp UMETA(DisplayName = "SpeedUp")
+};
+
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -51,9 +59,38 @@ class ASkateDemoCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Speed Up Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SpeedUpAction;
+
+	/** Slow Down Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SlowDownAction;
+
+
 public:
 	ASkateDemoCharacter();
 
+	EAbilityType CurrentAbilityType = EAbilityType::None;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "SkatePlayer|SkaterAbilities")
+	float DefaultBrakingDecelerationWalking = 250.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "SkatePlayer|SkaterAbilities")
+	float SlowDownBrakingDecelerationWalking = 550.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "SkatePlayer|SkaterAbilities")
+	float DefaultMaxWalkSpeed = 500.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "SkatePlayer|SkaterAbilities")
+	float SpeedUpInterpolationAlpha = 0.04f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "SkatePlayer|SkaterAbilities")
+	float SpeedUpMaxWalkSpeed = 950.0f;
+
+private:
+virtual void Tick(float DeltaTime) override;
 
 protected:
 
@@ -63,7 +100,13 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
-	virtual void Jump() override;
+	/** Called for Speed Up input*/
+	void SpeedUp(const FInputActionValue& Value);
+	void StopSpeedUp(const FInputActionValue& Value);
+
+	/** Called for SlowDown input */
+	void SlowDown(const FInputActionValue& Value);
+	void StopSlowDown(const FInputActionValue& Value);
 
 
 protected:
@@ -80,12 +123,10 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	UFUNCTION(BlueprintCallable, Category = "SkatePlayer")
-	FORCEINLINE class USkeletalMeshComponent* GetSkateSkeletalMesh() const { return SkateboardSkeletalMesh; }
+	FORCEINLINE USkeletalMeshComponent* GetSkateSkeletalMesh() const { return SkateboardSkeletalMesh; }
 
+	UFUNCTION(BlueprintCallable, Category = "SkatePlayer")
+	FORCEINLINE EAbilityType GetCurrentAbilityType() const { return CurrentAbilityType; }
 
-public:
-
-	UPROPERTY(EditDefaultsOnly, Category = "SkatePlayer")
-	UAnimationAsset* SkateAnimationJump;
 };
 
